@@ -13,4 +13,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Auction> Auctions { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Bid> Bids { get; set; }
+    public DbSet<Client> Clients { get; set; }
 }

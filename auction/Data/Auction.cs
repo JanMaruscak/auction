@@ -12,5 +12,6 @@
         public int MinBid { get; set; }
         public bool MinBidInPercentage { get; set; }
         public string ImgUrl { get; set; }
+        public bool IsAuthorized { get; set; }
     }
 }

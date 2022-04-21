@@ -23,4 +23,46 @@ public class UserService
         RoleManager.CreateAsync(new IdentityRole("Admin"));
         RoleManager.CreateAsync(new IdentityRole("Supervizor"));
     }
+
+    public List<Client> GetClients()
+    {
+        return DbContext.Clients.ToList();
+    }
+
+    /// <summary>
+    /// Accountant only
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="amount"></param>
+    public void AddMoney(Client client, int amount)
+    {
+        if(!DbContext.Clients.Any(x=>x.Id == client.Id))
+        {
+            
+        }
+        else
+        {
+            var clientToUpdate = GetClient(client.Email);
+            clientToUpdate.Money += amount;
+        }
+
+        DbContext.SaveChanges();
+    }
+
+    public Client GetClient(string email)
+    {
+        if (!DbContext.Clients.Any(x => x.Email == email))
+        {
+
+            return null;
+        }
+        return DbContext.Clients.First(x=>x.Email == email);
+    }
+
+    public void AddClient(string email)
+    {
+        var client = new Client() { Email = email, Money = 0 };
+        DbContext.Clients.Add(client);
+        DbContext.SaveChanges();
+    }
 }

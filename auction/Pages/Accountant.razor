@@ -1,0 +1,19 @@
+﻿@page "/Accountant"
+@inject UserService UserService
+<h3>Accountant</h3>
+@foreach (var user in UserService.GetClients())
+{
+    <p>@user.Email</p>
+    <p>@user.Money</p>
+    <input type="number" min="0" @bind="MoneyToAdd">
+    <button @onclick="() => AddMoney(user)">add bid</button>
+}
+
+@code {
+    public int MoneyToAdd;
+
+    public void AddMoney(Client client)
+    {
+        UserService.AddMoney(client,MoneyToAdd);
+    }
+}

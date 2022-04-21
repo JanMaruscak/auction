@@ -34,8 +34,20 @@ public class AuctionService
         DbContext.SaveChanges();
     }
 
-    public void BidOnAuction(int auctionId, Bid bid)
+    /// <summary>
+    /// Supervisor only
+    /// </summary>
+    /// <param name="id"></param>
+    public void AuthorizeAuction(int id)
     {
+        var auct = GetAuction(id);
+        auct.IsAuthorized = true;
+        DbContext.SaveChanges();
+    }
+
+    public void BidOnAuction(int auctionId, Bid bid, Client client)
+    {
+        if (client.Money <= bid.Amount) return;
         DbContext.Auctions.Include(x=>x.Bids).First(x => x.Id == auctionId).Bids.Add(bid);
         DbContext.SaveChanges();
     }

@@ -1,6 +1,7 @@
 ﻿@page "/auction/{id:int}"
 @using Aukce.Data
 @inject AuctionService AuctionService
+@inject UserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider  
 <h3>auction view</h3>
 
@@ -36,7 +37,7 @@
         bid.Author = user.Identity.Name;
         bid.Time = DateTime.Now;
         if(bid.Amount >= Cost)
-        AuctionService.BidOnAuction(id, bid);
+        AuctionService.BidOnAuction(id, bid, UserService.GetClient(user.Identity.Name));
     }
 
 }

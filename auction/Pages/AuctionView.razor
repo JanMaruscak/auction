@@ -1,0 +1,42 @@
+﻿@page "/auction/{id:int}"
+@using Aukce.Data
+@inject AuctionService AuctionService
+@inject AuthenticationStateProvider AuthenticationStateProvider  
+<h3>auction view</h3>
+
+@auction.Author
+@auction.Title
+
+
+
+<input type="number" min="@Cost" @bind="bid.Amount">
+<button @onclick="() => AddBid()">add bid</button>
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    public Bid bid = new Bid();
+    public Auction auction = new Auction();
+    public int Cost = 0;
+    
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        auction = AuctionService.GetAuction(id);
+        if(auction.Bids.Count > 0)
+        Cost = auction.Bids.Last().Amount;
+        bid.Amount = Cost;
+    }
+
+    public  async void AddBid()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        bid.Author = user.Identity.Name;
+        bid.Time = DateTime.Now;
+        if(bid.Amount >= Cost)
+        AuctionService.BidOnAuction(id, bid);
+    }
+
+}

@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "auction", "auction\auction.csproj", "{C69FCA88-18E4-40E3-9FC4-D8D09BE4B43A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C69FCA88-18E4-40E3-9FC4-D8D09BE4B43A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C69FCA88-18E4-40E3-9FC4-D8D09BE4B43A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C69FCA88-18E4-40E3-9FC4-D8D09BE4B43A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C69FCA88-18E4-40E3-9FC4-D8D09BE4B43A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

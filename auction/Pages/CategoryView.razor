@@ -1,0 +1,40 @@
+﻿@page "/category/{id:int}"
+@using Aukce.Data
+@inject AuctionService AuctionService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager navigationManager
+<h3>category view</h3>
+
+@category.Title
+@foreach (var auct in AuctionService.GetAuctions(id))
+{
+    <div @onclick="() => RedirectToAuction(auct.Id)">
+        @auct.Title
+        <br/>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public int id { get; set; }
+
+    public Category category = new Category();
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    public async void AddBid()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+    }
+
+    public void RedirectToAuction(int id)
+    {
+        navigationManager.NavigateTo($"auction/{id}");
+    }
+}

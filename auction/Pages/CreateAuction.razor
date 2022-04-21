@@ -1,0 +1,61 @@
+﻿@page "/createAuction"
+@using Aukce.Data
+@attribute [Authorize]
+<h3>Auctions</h3>
+@inject AuctionService AuctionService
+@inject AuthenticationStateProvider AuthenticationStateProvider  
+@inject UserService UserService
+
+
+<EditForm Model="auction">
+    <div class="form-group">
+        <label for="">Description</label>
+        <InputText @bind-Value="auction.Description"/>
+    </div>
+    <div class="form-group">
+        <label for="">Title</label>
+        <InputText @bind-Value="auction.Title"/>
+    </div>
+    <div class="form-group">
+        <label for="">ImgUrl</label>
+        <InputText @bind-Value="auction.ImgUrl"/>
+    </div>
+    <div class="form-group">
+        <label for="">Category</label>
+        <InputSelect @bind-Value="auction.Category.Title">
+            <option value="">Select...</option>
+            @foreach (var category in AuctionService.GetCategories())
+            {
+                <option value=@category.Title>@category.Title</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <label for="">ImgUrl</label>
+        <input type="number" @bind="auction.HoursLength" />
+    </div>
+    <button type="button" @onclick="() => AddAuction()">Add auction</button>
+</EditForm>
+
+@code {
+    List<Auction> auctions = new List<Auction>();
+    Auction auction = new Auction(){Category = new Aukce.Data.Category(), Bids = new List<Bid>()};
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        auctions = AuctionService.GetAuctions();
+    }
+
+    public async void AddAuction()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        auction.Author = user.Identity.Name;
+        auction.Category = AuctionService.GetCategory(auction.Category.Title);
+        auction.MinBid = 0;
+        AuctionService.AddAuction(auction);
+    }
+
+}

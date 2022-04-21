@@ -1,0 +1,31 @@
+﻿@page "/createCategory"
+@using Aukce.Data
+@attribute [Authorize]
+<h3>Auctions</h3>
+@inject AuctionService AuctionService
+<EditForm Model="category">
+    <div class="form-group">
+        <label for="">Title</label>
+        <InputText @bind-Value="category.Title"/>
+    </div>
+    <div class="form-group">
+        <label for="">Title</label>
+        <InputText @bind-Value="category.Description"/>
+    </div>
+    <button type="button" @onclick="() => AddCategory()">Add category</button>
+</EditForm>
+
+@code {
+    Category category = new Category();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    public void AddCategory()
+    {
+        AuctionService.AddCategory(category);
+    }
+
+}

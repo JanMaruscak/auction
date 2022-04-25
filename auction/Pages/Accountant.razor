@@ -1,5 +1,7 @@
 ﻿@page "/Accountant"
 @inject UserService UserService
+@attribute [Authorize(Roles = "Ucetni")]
+
 <h3>Accountant</h3>
 @foreach (var user in UserService.GetClients())
 {

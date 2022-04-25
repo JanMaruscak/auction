@@ -15,6 +15,15 @@ public class UserService
         UserManager = userManager;
         RoleManager = roleManager;
         //AddBaseRoles();
+        //AddRole("admin@admin.cz","Admin");
+        //AddRole("supervisor@supervisor.cz", "Supervizor");
+        //AddRole("accountant@accountant.cz", "Ucetni");
+    }
+
+    public async void AddRole(string email, string role)
+    {
+        var user = await UserManager.FindByEmailAsync(email);
+        await UserManager.AddToRoleAsync(user, role);
     }
 
     public void AddBaseRoles()

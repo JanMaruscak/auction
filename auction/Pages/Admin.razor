@@ -1,5 +1,6 @@
 ﻿@page "/Admin"
 @inject UserService UserService
+@attribute [Authorize(Roles = "Admin")]
 <h3>Admin</h3>
 
 <input type="text" @bind="email">

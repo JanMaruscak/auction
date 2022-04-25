@@ -38,7 +38,7 @@ public class UserService
     {
         if(!DbContext.Clients.Any(x=>x.Id == client.Id))
         {
-            
+            throw new Exception("Client not found. No money added.");
         }
         else
         {
@@ -53,8 +53,7 @@ public class UserService
     {
         if (!DbContext.Clients.Any(x => x.Email == email))
         {
-
-            return null;
+            throw new Exception("Client not found.");
         }
         return DbContext.Clients.First(x=>x.Email == email);
     }
@@ -62,6 +61,7 @@ public class UserService
     public void AddClient(string email)
     {
         var client = new Client() { Email = email, Money = 0 };
+        if (DbContext.Clients.Any(x => x.Email == email)) throw new Exception("Trying to add existing client.");
         DbContext.Clients.Add(client);
         DbContext.SaveChanges();
     }

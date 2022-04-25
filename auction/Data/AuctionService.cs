@@ -17,6 +17,11 @@ public class AuctionService
         return DbContext.Auctions.ToList();
     }
 
+    /// <summary>
+    /// Input category ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public List<Auction> GetAuctions(int id)
     {
         return DbContext.Auctions.Include(x => x.Category).Where(x => x.Category.Id == id).ToList();
@@ -45,11 +50,23 @@ public class AuctionService
         DbContext.SaveChanges();
     }
 
-    public void BidOnAuction(int auctionId, Bid bid, Client client)
+    public void BidOnAuction(int auctionId, Bid bid, string clientEmail)
     {
+        if (!DbContext.Clients.Any(x => x.Email == clientEmail)) return;
+        var client = DbContext.Clients.First(x => x.Email == clientEmail);
         if (client.Money <= bid.Amount) return;
         DbContext.Auctions.Include(x=>x.Bids).First(x => x.Id == auctionId).Bids.Add(bid);
         DbContext.SaveChanges();
+    }
+
+    public List<Auction> GetTop10Auctions()
+    {
+        return DbContext.Auctions.Include(x => x.Bids).OrderByDescending(x => x.Bids.Count).Take(10).ToList();
+    }
+
+    public List<Auction> GetUnAuthorizedAuctions()
+    {
+        return DbContext.Auctions.Include(x => x.Bids).Where(x => !x.IsAuthorized).ToList();
     }
 
     public List<Category> GetCategories()
@@ -60,6 +77,11 @@ public class AuctionService
     public Category GetCategory(string title)
     {
         return DbContext.Categories.First(x => x.Title == title);
+    }
+
+    public Category GetCategory(int id)
+    {
+        return DbContext.Categories.First(x => x.Id == id);
     }
 
     public Auction GetAuction(int id)

@@ -37,7 +37,7 @@
         bid.Author = user.Identity.Name;
         bid.Time = DateTime.Now;
         if(bid.Amount >= Cost)
-        AuctionService.BidOnAuction(id, bid, UserService.GetClient(user.Identity.Name));
+        AuctionService.BidOnAuction(id, bid, user.Identity.Name);
     }
 
 }

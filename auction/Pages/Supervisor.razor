@@ -1,6 +1,20 @@
 ﻿@page "/Supervisor"
+@inject AuctionService AuctionService
 <h3>Supervisor</h3>
 
+
+@foreach (var auct in AuctionService.GetUnAuthorizedAuctions())
+{
+    @auct.Author
+    @auct.Title
+    @auct.Description
+    <button @onclick="() => AuthorizeAuction(auct.Id)">Authorize</button>
+}
+
 @code {
-    
+
+    public void AuthorizeAuction(int id)
+    {
+        AuctionService.AuthorizeAuction(id);
+    }
 }

@@ -3,9 +3,10 @@
 @inject AuctionService AuctionService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager navigationManager
-<h3>category view</h3>
+<h1>category view</h1>
 
-@category.Title
+
+<h2>Title: @category.Title</h2>
 @foreach (var auct in AuctionService.GetAuctions(id))
 {
     <div @onclick="() => RedirectToAuction(auct.Id)">
@@ -25,6 +26,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        category = AuctionService.GetCategory(id);
     }
 
     public async void AddBid()

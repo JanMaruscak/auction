@@ -10,6 +10,9 @@
     <div @onclick="() => RedirectToCategory(category.Id)">
         <p>@category.Title</p>
     </div>
+    <AuthorizeView Roles="Admin">
+    <button @onclick="() => RedirectToEditCategory(category.Id)">Edit</button>
+    </AuthorizeView>
 }
 <h2>Top 10 aukci</h2>
 
@@ -36,5 +39,10 @@
     public void RedirectToCategory(int id)
     {
         navigationManager.NavigateTo($"category/{id}");
+    }
+
+    public void RedirectToEditCategory(int id)
+    {
+        navigationManager.NavigateTo($"editcategory/{id}");
     }
 }

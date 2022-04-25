@@ -54,7 +54,11 @@ public class AuctionService
     {
         if (!DbContext.Clients.Any(x => x.Email == clientEmail)) return;
         var client = DbContext.Clients.First(x => x.Email == clientEmail);
+        var auction = DbContext.Auctions.Include(x => x.Bids).First(x => x.Id == auctionId);
         if (client.Money <= bid.Amount) return;
+        if (client.Money <= auction.MinBid && !auction.MinBidInPercentage) return;
+        if (client.Money <= auction.Bids.Last().Amount * (1 + auction.MinBid) && auction.MinBidInPercentage) return;
+        if(!auction.IsAuthorized) return;
         DbContext.Auctions.Include(x=>x.Bids).First(x => x.Id == auctionId).Bids.Add(bid);
         DbContext.SaveChanges();
     }
@@ -77,6 +81,12 @@ public class AuctionService
     public Category GetCategory(string title)
     {
         return DbContext.Categories.First(x => x.Title == title);
+    }
+
+    public void EditCategory(Category category)
+    {
+        DbContext.Entry(DbContext.Categories.First(x => x.Id == category.Id)).CurrentValues.SetValues(category);
+        DbContext.SaveChanges();
     }
 
     public Category GetCategory(int id)

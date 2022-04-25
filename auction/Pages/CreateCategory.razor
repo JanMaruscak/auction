@@ -1,6 +1,6 @@
 ﻿@page "/createCategory"
 @using Aukce.Data
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 <h3>Auctions</h3>
 @inject AuctionService AuctionService
 <EditForm Model="category">

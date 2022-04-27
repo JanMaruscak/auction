@@ -7,9 +7,11 @@ public class AuctionService
 {
 
     public ApplicationDbContext DbContext;
-    public AuctionService(ApplicationDbContext dbContext)
+    //public SignalR SignalR;
+    public AuctionService(ApplicationDbContext dbContext)//, SignalR signalR)
     {
         DbContext = dbContext;
+        //SignalR = signalR;
     }
 
     public List<Auction> GetAuctions()
@@ -50,17 +52,22 @@ public class AuctionService
         DbContext.SaveChanges();
     }
 
-    public void BidOnAuction(int auctionId, Bid bid, string clientEmail)
+    public bool BidOnAuction(int auctionId, Bid bid, string clientEmail)
     {
-        if (!DbContext.Clients.Any(x => x.Email == clientEmail)) return;
+        if (!DbContext.Clients.Any(x => x.Email == clientEmail)) return false;
         var client = DbContext.Clients.First(x => x.Email == clientEmail);
         var auction = DbContext.Auctions.Include(x => x.Bids).First(x => x.Id == auctionId);
-        if (client.Money <= bid.Amount) return;
-        if (client.Money <= auction.MinBid && !auction.MinBidInPercentage) return;
-        if (client.Money <= auction.Bids.Last().Amount * (1 + auction.MinBid) && auction.MinBidInPercentage) return;
-        if(!auction.IsAuthorized) return;
+        if (client.Money <= bid.Amount) return false;
+        if (client.Money <= auction.MinBid && !auction.MinBidInPercentage) return false;
+        if (auction.Bids.Count > 0 && client.Money <= auction.Bids.Last().Amount * (1 + auction.MinBid) && auction.MinBidInPercentage) return false;
+        if(!auction.IsAuthorized) return false;
         DbContext.Auctions.Include(x=>x.Bids).First(x => x.Id == auctionId).Bids.Add(bid);
+        client.Money -= bid.Amount;
+        
+        //SignalR.SendMessage(client.Email,$"Bid {bid.Amount} on {auction.Title}");
+        
         DbContext.SaveChanges();
+        return true;
     }
 
     public List<Auction> GetTop10Auctions()

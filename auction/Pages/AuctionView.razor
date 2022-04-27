@@ -1,13 +1,19 @@
 ﻿@page "/auction/{id:int}"
 @using Aukce.Data
+@using Microsoft.AspNetCore.SignalR.Client
 @inject AuctionService AuctionService
-@inject UserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider 
+@inject NavigationManager NavigationManager
+@inject TalkService talkService
+
 <h3>auction view</h3>
 
 @auction.Author
 @auction.Title
-
+@foreach (var m in messages)
+{
+    <p>@m</p>
+}
 
 
 <input type="number" min="@Cost" @bind="bid.Amount">
@@ -21,9 +27,15 @@
     public int Cost = 0;
     
 
-    protected override void OnInitialized()
+    List<string> messages;
+
+    string lastMessage = "";
+    
+
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
+
         auction = AuctionService.GetAuction(id);
         if(auction.Bids.Count > 0)
         Cost = auction.Bids.Last().Amount;
@@ -37,7 +49,31 @@
         bid.Author = user.Identity.Name;
         bid.Time = DateTime.Now;
         if(bid.Amount >= Cost)
-        AuctionService.BidOnAuction(id, bid, user.Identity.Name);
+            if (AuctionService.BidOnAuction(id, bid, user.Identity.Name))
+                await Send($"{user.Identity.Name} bid on {auction.Id} with {bid.Amount}");
+    }
+
+    async Task Send(string message)
+    {
+        if(!string.IsNullOrWhiteSpace(message))
+            await talkService.SendAsync(message);
+    }
+
+    protected override void OnParametersSet()
+    {
+    // load history
+        messages = talkService.GetHistory().ToList();
+
+    // register for updates
+        talkService.OnChange += ChangeHandler;
+    }
+
+    protected void ChangeHandler(string message)
+    {
+        messages.Add(message);
+        InvokeAsync(StateHasChanged);
+        auction = AuctionService.GetAuction(auction.Id);
+        Cost = auction.MinBid;
     }
 
 }
